@@ -1,17 +1,21 @@
 // Inspired by react-hot-toast library
 import * as React from "react"
+import { ToastT as SonnerToastT, toast as sonnerToast } from "sonner"
 
-import type { ToastActionElement, ToastProps } from "@/components/ui/toast"
+import {
+  Toast,
+  ToastAction,
+  ToastActionElement,
+  ToastClose,
+  ToastDescription,
+  ToastProps,
+  ToastTitle,
+} from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToasterToast = ToastProps & {
-  id: string
-  title?: React.ReactNode
-  description?: React.ReactNode
-  action?: ToastActionElement
-}
+type ToasterToast = SonnerToastT
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
@@ -72,6 +76,28 @@ const addToRemoveQueue = (toastId: string) => {
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TOAST":
+      sonnerToast.custom((t) => (
+        <Toast variant={action.toast.variant}>
+          <div className="grid gap-1">
+            {action.toast.title && (
+              <ToastTitle>{action.toast.title}</ToastTitle>
+            )}
+            {action.toast.description && (
+              <ToastDescription>{action.toast.description}</ToastDescription>
+            )}
+          </div>
+          {action.toast.action && (
+            <ToastAction
+              onClick={action.toast.action.onClick}
+              altText="Goto schedule to undo"
+            >
+              {action.toast.action.label}
+            </ToastAction>
+          )}
+          <ToastClose onClick={() => sonnerToast.dismiss(t)} />
+        </Toast>
+      ))
+
       return {
         ...state,
         toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
@@ -135,9 +161,9 @@ function dispatch(action: Action) {
   })
 }
 
-type Toast = Omit<ToasterToast, "id">
+type ToastType = Omit<ToasterToast, "id">
 
-function toast({ ...props }: Toast) {
+function toast({ ...props }: ToastType) {
   const id = genId()
 
   const update = (props: ToasterToast) =>

@@ -65,6 +65,7 @@
     "react-wrap-balancer": "^0.4.1",
     "recharts": "^2.6.2",
     "sharp": "^0.31.3",
+    "sonner": "^0.4.0",
     "tailwind-merge": "^1.12.0",
     "zod": "^3.21.4"
   },
